@@ -42,7 +42,7 @@ app.post("/comments", (req, res) => {
   console.log(req.body);
   const { username, comment } = req.body;
   comments.push({ username, comment });
-  res.send("IT WORKED!");
+  res.redirect("/comments");
 });
 
 app.get("/tacos", (req, res) => {
