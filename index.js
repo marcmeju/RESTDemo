@@ -2,6 +2,8 @@ const express = require("express");
 // const { text } = require("stream/consumers");
 const app = express();
 const path = require("path");
+const { v4: uuid } = require("uuid");
+// uuidv4(); // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
 
 app.use(express.urlencoded({ extended: true })); //this is for urlencoded data (forms)
 app.use(express.json()); //this is for json encoded data
@@ -9,29 +11,34 @@ app.set("views", path.join(__dirname, "views")); //Ensures we are using absolute
 app.set("view engine", "ejs");
 
 const comments = [
-  {
-    username: "Bhasker",
-    comment: "hahaha that is so not funny",
-  },
+  { id: uuid(), username: "Bhasker", comment: "hahaha that is so not funny" },
 
-  {
-    username: "Montana",
-    comment: "I like to pretend like I love basketball when really I love soccer",
-  },
+  { id: uuid(), username: "Montana", comment: "I like to pretend like I love basketball when really I love soccer" },
 
-  {
-    username: "Julio",
-    comment: "Now, that is really not funny, Montana. Delete your account.",
-  },
+  { id: uuid(), username: "Julio", comment: "Now, that is really not funny, Montana. Delete your account." },
 
-  {
-    username: "Jack",
-    comment: "Like always, I have nothing to say",
-  },
+  { id: uuid(), username: "Jack", comment: "Like always, I have nothing to say" },
 ];
 
 app.get("/comments", (req, res) => {
   res.render("comments/index", { comments });
+});
+
+app.get("/comments/new", (req, res) => {
+  res.render("comments/new");
+});
+
+app.post("/comments", (req, res) => {
+  console.log(req.body);
+  const { username, comment } = req.body;
+  comments.push({ username, comment, id: uuid() });
+  res.redirect("/comments");
+});
+
+app.get("/comments/:id", (req, res) => {
+  const { id } = req.params;
+  const coment = comments.find((c) => c.id === id);
+  res.render("comments/show", { coment });
 });
 
 app.get("/tacos", (req, res) => {
